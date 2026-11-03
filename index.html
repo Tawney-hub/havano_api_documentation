@@ -259,7 +259,7 @@
       <span>Havano POS API</span>
     </div>
 
-    <div class="server-box" title="Server URL for testing">
+    <div class="server-box" title="Server URL for live API execution">
       <span class="server-dot"></span>
       <span class="server-label">Server</span>
       <input type="text" id="targetServerUrl" class="server-input" value="https://backoffice.havano.pro" spellcheck="false" onchange="onServerChange()">
@@ -320,8 +320,11 @@
     }
 
     window.onload = function() {
+      // Force cache-busting timestamp on every page load
+      const cacheBustSpecUrl = "openapi.json?t=" + new Date().getTime();
+
       ui = SwaggerUIBundle({
-        url: "openapi.json",
+        url: cacheBustSpecUrl,
         dom_id: "#swagger-ui",
         deepLinking: true,
         presets: [
@@ -337,11 +340,20 @@
         tryItOutEnabled: true,
         persistAuthorization: true,
         requestInterceptor: function(req) {
-          const targetUrl = getCustomServerUrl();
-          if (targetUrl) {
-            const defaultBase = "https://backoffice.havano.pro";
-            if (req.url.startsWith(defaultBase)) {
-              req.url = req.url.replace(defaultBase, targetUrl);
+          const targetServer = getCustomServerUrl();
+          const defaultServer = "https://backoffice.havano.pro";
+
+          // If the URL starts with default server, rewrite it to user-specified target server
+          if (req.url.startsWith(defaultServer)) {
+            req.url = req.url.replace(defaultServer, targetServer);
+          }
+
+          // If hosted on Vercel or any remote domain, proxy through /api/proxy to bypass browser CORS!
+          if (window.location.protocol.startsWith('http') && !window.location.hostname.includes('localhost')) {
+            // Only proxy if calling an external server
+            if (req.url.startsWith('http://') || req.url.startsWith('https://')) {
+              const fullTarget = req.url;
+              req.url = window.location.origin + "/api/proxy?url=" + encodeURIComponent(fullTarget);
             }
           }
           return req;

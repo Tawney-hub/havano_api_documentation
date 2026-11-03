@@ -8,7 +8,7 @@ spec = {
     "openapi": "3.0.3",
     "info": {
         "title": "Havano POS - Frappe & SaaS Backoffice API",
-        "description": "Interactive documentation for Frappe Framework core REST/RPC APIs and Havano POS SaaS backoffice endpoints. Target server: https://backoffice.havano.pro.",
+        "description": "API documentation for Frappe Framework core REST/RPC APIs and Havano POS SaaS backoffice endpoints. Target server: https://backoffice.havano.pro.",
         "version": "2026.1.0",
         "contact": {
             "name": "Havano Engineering",
@@ -116,7 +116,7 @@ def ep(path, method, tag, summary, desc, params=None, body_example=None, resp_ex
 ep(
     "/api/method/login", "POST", "Frappe Core APIs",
     "Standard Frappe Login",
-    "Standard Frappe Framework authentication endpoint. Accepts username/email and password only. Sets session cookie 'sid' and returns user full name.",
+    "Official Frappe Framework authentication endpoint. Takes username/email and password only. Sets session cookie 'sid' and returns user full name.",
     body_example={
         "usr": "administrator",
         "pwd": "admin_password"
@@ -247,36 +247,50 @@ ep(
 )
 
 # =========================================================================
-# 2. AUTH & TERMINALS (CLEAN USR & PWD ONLY - NO DEVICE ID REQUIRED)
+# 2. AUTH & TERMINALS - EXACT CODEBASE STRUCTURE (USR, PWD, TIMEZONE)
 # =========================================================================
 ep(
     "/api/method/saas_api.www.api.login", "POST", "Auth & Terminals",
-    "SaaS User Login (Clean usr & pwd)",
-    "Authenticates user credentials against SaaS backoffice. Only requires `usr` and `pwd`. Returns API token, assigned companies, role, and shops.",
+    "SaaS User Login (Direct from auth_service.py)",
+    "Exact login payload sent by Havano POS `services/auth_service.py` to authenticate cashiers with the backoffice. Structure requires ONLY `usr`, `pwd`, and `timezone`. NO device id in payload.",
     body_example={
         "usr": "cashier@havano.pro",
-        "pwd": "StrongPassword123!"
+        "pwd": "StrongPassword123!",
+        "timezone": "Africa/Harare"
     },
     resp_example={
         "message": {
-            "success": True,
-            "token": "token_abc123xyz",
-            "api_key": "user_api_key",
-            "api_secret": "user_api_secret",
+            "token": "YWJjNEBnbWFpbC5jb206SjFtNDkzMHdyMQ==",
+            "token_string": "cashier@havano.pro:J1m4930wr1",
+            "api_key": "cashier@havano.pro",
+            "api_secret": "J1m4930wr1",
             "user": {
+                "username": "cashier@havano.pro",
                 "email": "cashier@havano.pro",
                 "full_name": "John Doe",
-                "role": "POS Cashier",
-                "company": "Havano Retail Ltd"
-            },
-            "shops": [
-                {
-                    "id": 68,
-                    "name": "Downtown Branch",
-                    "price_lists": ["Standard Retail", "Wholesale USD"],
-                    "default_pricelist": "Standard Retail"
-                }
-            ]
+                "company": "Havano Retail Ltd",
+                "warehouse": "Machipisa Main Store - HRL",
+                "cost_center": "Main - HRL",
+                "roles": [
+                    "Administrator",
+                    "POS Cashier"
+                ],
+                "user_rights": {
+                    "profile_name": "POS Cashier"
+                },
+                "shops": [
+                    {
+                        "id": 68,
+                        "name": "Downtown Branch",
+                        "warehouse": "Downtown Main Store - HRL",
+                        "pricelist_names": [
+                            "Retail USD",
+                            "Retail ZiG"
+                        ],
+                        "default_pricelist_name": "Retail USD"
+                    }
+                ]
+            }
         }
     }
 )
@@ -284,7 +298,7 @@ ep(
 ep(
     "/api/auth/login", "POST", "Auth & Terminals",
     "Direct API Login",
-    "Alternative direct login taking login and password.",
+    "Alternative direct auth route taking `login` and `password`.",
     body_example={"login": "cashier@havano.pro", "password": "StrongPassword123!"},
     resp_example={"status": "success", "token": "token_abc123xyz"}
 )
@@ -292,16 +306,22 @@ ep(
 ep(
     "/api/user/select-terminal", "POST", "Auth & Terminals",
     "Bind POS Terminal",
-    "Assigns terminal slot to cashier. Supports takeover if previously assigned.",
-    body_example={"terminal_id": 186, "user": "cashier@havano.pro", "take_over": True},
+    "Assigns a physical terminal slot to the cashier. Supports takeover if previously assigned.",
+    body_example={
+        "terminal_id": 186,
+        "take_over": True,
+        "device_hardware_id": "fortune0100",
+        "app_version": "2.0.8.28",
+        "user": "cashier@havano.pro"
+    },
     resp_example={"status": "success", "message": "Terminal assigned", "terminal": {"id": 186, "name": "Till 1"}}
 )
 
 ep(
     "/api/user/shops", "GET", "Auth & Terminals",
-    "User Assigned Shops",
-    "Fetches retail stores and assigned price lists for authenticated user.",
-    resp_example={"data": [{"shop_id": 68, "shop_name": "Downtown Branch", "default_pricelist_name": "Retail USD"}]}
+    "User Assigned Shops & Price Lists",
+    "Fetches stores and assigned price lists from `/api/user/shops`.",
+    resp_example={"data": [{"shop_id": 68, "shop_name": "Downtown Branch", "default_pricelist_name": "Retail USD", "pricelist_names": ["Retail USD", "Retail ZiG"]}]}
 )
 
 ep(

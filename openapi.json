@@ -1,84 +1,78 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Havano POS - Frappe & SaaS Backoffice API",
-    "description": "API documentation for Frappe Framework core REST/RPC APIs and Havano POS SaaS backoffice endpoints. Target server: https://backoffice.havano.pro.",
-    "version": "2026.1.0",
-    "contact": {
-      "name": "Havano Engineering",
-      "url": "https://backoffice.havano.pro"
-    }
+    "title": "Havano POS API",
+    "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "https://backoffice.havano.pro",
-      "description": "Production SaaS Server"
+      "url": "https://backoffice.havano.pro"
     }
   ],
   "tags": [
     {
       "name": "Frappe Core APIs",
-      "description": "Standard Frappe Framework endpoints: Auth, DocType CRUD, RPCs, and System Methods"
+      "description": "Standard Frappe REST & RPC methods"
     },
     {
       "name": "Auth & Terminals",
-      "description": "POS authentication, terminal selection, user sessions and branches"
+      "description": "Authentication and terminal binding"
     },
     {
       "name": "Products & Bundles",
-      "description": "Catalog sync, prices, barcodes, bundles, and item groups"
+      "description": "Catalog, prices, and bundles"
     },
     {
       "name": "Customers & Loyalty",
-      "description": "Customer sync, creation, balance checks, and loyalty redemption"
+      "description": "Customer profiles and balances"
     },
     {
       "name": "Sales Invoices & POS",
-      "description": "POS sale submission, return credit notes, and sales invoices"
+      "description": "POS sales and returns"
     },
     {
       "name": "Orders & Quotations",
-      "description": "Sales orders and sales quotations creation and sync"
+      "description": "Sales orders and quotations"
     },
     {
       "name": "Payments & Shifts",
-      "description": "Payment entries, payment modes, cash transfers, and shift management"
+      "description": "Payments, MOPs, and shift reconciliation"
     },
     {
       "name": "Expenses",
-      "description": "Petty cash claims, categories, and approvals"
+      "description": "Petty cash claims and categories"
     },
     {
       "name": "Pharmacy & Medical",
-      "description": "Doctors and prescription dosage directions"
+      "description": "Doctors and dosages"
     },
     {
       "name": "Inventory & Stock",
-      "description": "Stock balance, stock entries, and warehouses"
+      "description": "Stock balance and movements"
     },
     {
       "name": "Suppliers & Purchasing",
-      "description": "Vendors, purchase invoices, and GRVs"
+      "description": "Vendors and GRVs"
     },
     {
       "name": "Master Data & Setup",
-      "description": "Currencies, exchange rates, GL accounts, taxes, and users"
+      "description": "Currencies, rates, taxes, and users"
     },
     {
       "name": "ZIMRA Fiscalization",
-      "description": "Fiscal day open/close, status, and ZIMRA invoice signatures"
+      "description": "Fiscal day and invoice signing"
     },
     {
       "name": "Restaurant & KDS",
-      "description": "Dining tables, kitchen order tickets (KOT), and table orders"
+      "description": "Tables, orders, and KOTs"
     },
     {
       "name": "Subscriptions & Billing",
-      "description": "SaaS plans, balance top-ups, and renewal payments"
+      "description": "License plans and status"
     },
     {
       "name": "Reports & Analytics",
-      "description": "Daily sales, profitability metrics, and Frappe reports"
+      "description": "Daily sales and reports"
     }
   ],
   "components": {
@@ -87,18 +81,12 @@
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
-        "description": "Frappe API token format: `token <api_key>:<api_secret>`"
-      },
-      "BearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+        "description": "token <api_key>:<api_secret>"
       },
       "CookieAuth": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "sid",
-        "description": "Frappe session cookie established via POST /api/method/login"
+        "name": "sid"
       }
     }
   },
@@ -116,12 +104,12 @@
         "tags": [
           "Frappe Core APIs"
         ],
-        "summary": "Standard Frappe Login",
-        "description": "Official Frappe Framework authentication endpoint. Takes username/email and password only. Sets session cookie 'sid' and returns user full name.",
+        "summary": "Frappe Login",
+        "description": "Standard login with username and password.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -137,23 +125,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -178,11 +156,11 @@
           "Frappe Core APIs"
         ],
         "summary": "Frappe Logout",
-        "description": "Destroys active Frappe session and invalidates session cookies.",
+        "description": "Invalidates current session.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -196,23 +174,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -222,12 +190,12 @@
         "tags": [
           "Frappe Core APIs"
         ],
-        "summary": "Get Current Logged-in User",
-        "description": "Returns the email / user ID of the currently authenticated user.",
+        "summary": "Get Logged User",
+        "description": "Returns current user ID.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -241,23 +209,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -267,12 +225,12 @@
         "tags": [
           "Frappe Core APIs"
         ],
-        "summary": "Frappe Ping (Health Check)",
-        "description": "Standard Frappe health check endpoint. Returns 'pong' if server is healthy.",
+        "summary": "Ping Server",
+        "description": "Server health check.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -286,23 +244,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -312,12 +260,12 @@
         "tags": [
           "Frappe Core APIs"
         ],
-        "summary": "Get Frappe Framework Version",
-        "description": "Returns active Frappe Framework version string.",
+        "summary": "Frappe Version",
+        "description": "Returns Frappe version.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -331,23 +279,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -357,8 +295,8 @@
         "tags": [
           "Frappe Core APIs"
         ],
-        "summary": "List DocType Records (Universal REST)",
-        "description": "Standard Frappe REST endpoint to query any DocType (e.g. Item, Customer, Sales Invoice, User, Mode of Payment). Supports JSON filters, field selection, sorting, and pagination.",
+        "summary": "List Documents",
+        "description": "Query any Frappe DocType with filters.",
         "parameters": [
           {
             "name": "doctype",
@@ -375,7 +313,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "[\"name\", \"item_name\", \"standard_rate\"]"
+            "example": "[\"name\", \"item_name\"]"
           },
           {
             "name": "filters",
@@ -383,15 +321,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "[[\"is_stock_item\",\"=\",1]]"
-          },
-          {
-            "name": "order_by",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "example": "creation desc"
+            "example": "[[\"disabled\",\"=\",0]]"
           },
           {
             "name": "limit_page_length",
@@ -400,27 +330,18 @@
               "type": "integer",
               "default": 20
             }
-          },
-          {
-            "name": "limit_start",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 0
-            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
                   "data": [
                     {
-                      "name": "ITEM-00102",
-                      "item_name": "Paracetamol 500mg",
-                      "standard_rate": 2.5
+                      "name": "ITEM-001",
+                      "item_name": "Sample Item"
                     }
                   ]
                 }
@@ -432,23 +353,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       },
@@ -456,8 +367,8 @@
         "tags": [
           "Frappe Core APIs"
         ],
-        "summary": "Create New Document (Universal REST)",
-        "description": "Creates a new record for any DocType in Frappe.",
+        "summary": "Create Document",
+        "description": "Create a new document for any DocType.",
         "parameters": [
           {
             "name": "doctype",
@@ -471,14 +382,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
                   "data": {
                     "name": "Acme Holdings",
-                    "doctype": "Customer",
-                    "customer_name": "Acme Holdings"
+                    "doctype": "Customer"
                   }
                 }
               }
@@ -489,23 +399,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -517,8 +417,7 @@
               },
               "example": {
                 "customer_name": "Acme Holdings",
-                "customer_group": "Commercial",
-                "territory": "Zimbabwe"
+                "customer_group": "Commercial"
               }
             }
           }
@@ -530,8 +429,8 @@
         "tags": [
           "Frappe Core APIs"
         ],
-        "summary": "Get Single Document (Universal REST)",
-        "description": "Fetches a document by its primary key/name, including all child tables.",
+        "summary": "Get Document",
+        "description": "Retrieve single document by name.",
         "parameters": [
           {
             "name": "doctype",
@@ -549,20 +448,18 @@
             "schema": {
               "type": "string"
             },
-            "example": "ITEM-00102"
+            "example": "ITEM-001"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
                   "data": {
-                    "name": "ITEM-00102",
-                    "item_name": "Paracetamol 500mg",
-                    "stock_uom": "Pack",
-                    "standard_rate": 2.5
+                    "name": "ITEM-001",
+                    "item_name": "Sample Item"
                   }
                 }
               }
@@ -573,23 +470,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       },
@@ -597,8 +484,8 @@
         "tags": [
           "Frappe Core APIs"
         ],
-        "summary": "Update Document (Universal REST)",
-        "description": "Updates fields of an existing document.",
+        "summary": "Update Document",
+        "description": "Update existing document fields.",
         "parameters": [
           {
             "name": "doctype",
@@ -616,17 +503,17 @@
             "schema": {
               "type": "string"
             },
-            "example": "ITEM-00102"
+            "example": "ITEM-001"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
                   "data": {
-                    "name": "ITEM-00102",
+                    "name": "ITEM-001",
                     "standard_rate": 2.75
                   }
                 }
@@ -638,23 +525,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -675,8 +552,8 @@
         "tags": [
           "Frappe Core APIs"
         ],
-        "summary": "Delete Document (Universal REST)",
-        "description": "Deletes a document from Frappe database.",
+        "summary": "Delete Document",
+        "description": "Delete document by name.",
         "parameters": [
           {
             "name": "doctype",
@@ -694,12 +571,12 @@
             "schema": {
               "type": "string"
             },
-            "example": "ITEM-00102"
+            "example": "ITEM-001"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -713,23 +590,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -739,12 +606,12 @@
         "tags": [
           "Frappe Core APIs"
         ],
-        "summary": "RPC: frappe.client.get",
-        "description": "RPC call returning full document dictionary.",
+        "summary": "RPC: Get Doc",
+        "description": "RPC to fetch document dict.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -761,23 +628,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -801,19 +658,19 @@
         "tags": [
           "Frappe Core APIs"
         ],
-        "summary": "RPC: frappe.client.get_list",
-        "description": "RPC call returning list of documents matching filters.",
+        "summary": "RPC: Get List",
+        "description": "RPC to fetch list of documents.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
                   "message": [
                     {
-                      "name": "ITEM-00102",
-                      "item_name": "Paracetamol 500mg"
+                      "name": "ITEM-001",
+                      "item_name": "Sample Item"
                     }
                   ]
                 }
@@ -825,23 +682,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -869,17 +716,17 @@
         "tags": [
           "Frappe Core APIs"
         ],
-        "summary": "RPC: frappe.client.set_value",
-        "description": "RPC call to quickly update a single field on a document.",
+        "summary": "RPC: Set Value",
+        "description": "RPC to update single field.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
                   "message": {
-                    "name": "ITEM-00102",
+                    "name": "ITEM-001",
                     "standard_rate": 2.8
                   }
                 }
@@ -891,23 +738,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -919,74 +756,9 @@
               },
               "example": {
                 "doctype": "Item",
-                "name": "ITEM-00102",
+                "name": "ITEM-001",
                 "fieldname": "standard_rate",
                 "value": 2.8
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/method/frappe.client.insert": {
-      "post": {
-        "tags": [
-          "Frappe Core APIs"
-        ],
-        "summary": "RPC: frappe.client.insert",
-        "description": "RPC call inserting a document dictionary.",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": {
-                    "name": "Supplements",
-                    "doctype": "Item Group"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Invalid credentials or session expired"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object"
-              },
-              "example": {
-                "doc": {
-                  "doctype": "Item Group",
-                  "item_group_name": "Supplements",
-                  "parent_item_group": "All Item Groups"
-                }
               }
             }
           }
@@ -998,12 +770,12 @@
         "tags": [
           "Auth & Terminals"
         ],
-        "summary": "SaaS User Login (Direct from auth_service.py)",
-        "description": "Exact login payload sent by Havano POS `services/auth_service.py` to authenticate cashiers with the backoffice. Structure requires ONLY `usr`, `pwd`, and `timezone`. NO device id in payload.",
+        "summary": "POS Login",
+        "description": "Authenticate cashier with username, password, and timezone.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1015,26 +787,17 @@
                     "user": {
                       "username": "cashier@havano.pro",
                       "email": "cashier@havano.pro",
-                      "full_name": "John Doe",
+                      "full_name": "Cashier One",
                       "company": "Havano Retail Ltd",
                       "warehouse": "Machipisa Main Store - HRL",
                       "cost_center": "Main - HRL",
                       "roles": [
-                        "Administrator",
                         "POS Cashier"
                       ],
-                      "user_rights": {
-                        "profile_name": "POS Cashier"
-                      },
                       "shops": [
                         {
                           "id": 68,
                           "name": "Downtown Branch",
-                          "warehouse": "Downtown Main Store - HRL",
-                          "pricelist_names": [
-                            "Retail USD",
-                            "Retail ZiG"
-                          ],
                           "default_pricelist_name": "Retail USD"
                         }
                       ]
@@ -1049,23 +812,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -1085,82 +838,21 @@
         }
       }
     },
-    "/api/auth/login": {
-      "post": {
-        "tags": [
-          "Auth & Terminals"
-        ],
-        "summary": "Direct API Login",
-        "description": "Alternative direct auth route taking `login` and `password`.",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "example": {
-                  "status": "success",
-                  "token": "token_abc123xyz"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Invalid credentials or session expired"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object"
-              },
-              "example": {
-                "login": "cashier@havano.pro",
-                "password": "StrongPassword123!"
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/user/select-terminal": {
       "post": {
         "tags": [
           "Auth & Terminals"
         ],
-        "summary": "Bind POS Terminal",
-        "description": "Assigns a physical terminal slot to the cashier. Supports takeover if previously assigned.",
+        "summary": "Select Terminal",
+        "description": "Assign terminal slot to cashier.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
                   "status": "success",
-                  "message": "Terminal assigned",
                   "terminal": {
                     "id": 186,
                     "name": "Till 1"
@@ -1174,23 +866,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -1203,8 +885,6 @@
               "example": {
                 "terminal_id": 186,
                 "take_over": true,
-                "device_hardware_id": "fortune0100",
-                "app_version": "2.0.8.28",
                 "user": "cashier@havano.pro"
               }
             }
@@ -1217,12 +897,12 @@
         "tags": [
           "Auth & Terminals"
         ],
-        "summary": "User Assigned Shops & Price Lists",
-        "description": "Fetches stores and assigned price lists from `/api/user/shops`.",
+        "summary": "Get Shops",
+        "description": "List assigned shops and price lists.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1230,11 +910,7 @@
                     {
                       "shop_id": 68,
                       "shop_name": "Downtown Branch",
-                      "default_pricelist_name": "Retail USD",
-                      "pricelist_names": [
-                        "Retail USD",
-                        "Retail ZiG"
-                      ]
+                      "default_pricelist_name": "Retail USD"
                     }
                   ]
                 }
@@ -1246,23 +922,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -1272,12 +938,12 @@
         "tags": [
           "Auth & Terminals"
         ],
-        "summary": "Switch Active Shop",
-        "description": "Switches session to target shop branch.",
+        "summary": "Select Shop",
+        "description": "Switch active store branch.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1292,23 +958,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -1331,12 +987,12 @@
         "tags": [
           "Auth & Terminals"
         ],
-        "summary": "Current Session",
-        "description": "Returns current tenant session details.",
+        "summary": "Get Session",
+        "description": "Get current tenant session.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1352,23 +1008,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -1378,8 +1024,8 @@
         "tags": [
           "Products & Bundles"
         ],
-        "summary": "Sync Products Catalog",
-        "description": "Syncs products, barcodes, stock levels, and price lists down to local POS.",
+        "summary": "Sync Products",
+        "description": "Fetch product catalog and price list rates.",
         "parameters": [
           {
             "name": "page",
@@ -1400,7 +1046,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1429,23 +1075,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -1455,8 +1091,8 @@
         "tags": [
           "Products & Bundles"
         ],
-        "summary": "Delta Modified Products",
-        "description": "Fetches products updated since last sync datetime.",
+        "summary": "Delta Sync Products",
+        "description": "Fetch products updated since timestamp.",
         "parameters": [
           {
             "name": "last_sync_datetime",
@@ -1470,7 +1106,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1487,23 +1123,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -1513,12 +1139,12 @@
         "tags": [
           "Products & Bundles"
         ],
-        "summary": "Get Combo Product Bundles",
-        "description": "Retrieves combo bundle definitions with child component item lines.",
+        "summary": "Get Bundles",
+        "description": "Fetch combo bundles and components.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1542,23 +1168,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -1568,12 +1184,12 @@
         "tags": [
           "Products & Bundles"
         ],
-        "summary": "Create Product Bundle",
-        "description": "Creates a combo bundle in Frappe cloud.",
+        "summary": "Create Bundle",
+        "description": "Create combo bundle doc.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1589,23 +1205,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -1638,8 +1244,8 @@
         "tags": [
           "Customers & Loyalty"
         ],
-        "summary": "Sync Customers List",
-        "description": "Fetches customer accounts, tax TIN numbers, and credit balances.",
+        "summary": "Sync Customers",
+        "description": "Fetch customer accounts and limits.",
         "parameters": [
           {
             "name": "page",
@@ -1652,7 +1258,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1675,23 +1281,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -1702,11 +1298,11 @@
           "Customers & Loyalty"
         ],
         "summary": "Create Customer",
-        "description": "Registers a new customer record.",
+        "description": "Register a customer.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1723,23 +1319,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -1765,8 +1351,8 @@
         "tags": [
           "Customers & Loyalty"
         ],
-        "summary": "Get Customer Live Balance",
-        "description": "Returns real-time account balance and available credit limit.",
+        "summary": "Get Balance",
+        "description": "Check live balance and credit limit.",
         "parameters": [
           {
             "name": "customer",
@@ -1779,7 +1365,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1797,23 +1383,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -1823,12 +1399,12 @@
         "tags": [
           "Sales Invoices & POS"
         ],
-        "summary": "Submit Sales Invoice / Return Credit Note",
-        "description": "Pushes finalized POS sales invoice or return credit note (`is_return=1`) to Frappe.",
+        "summary": "Submit Invoice / Return",
+        "description": "Submit POS sales invoice or credit note (is_return=1).",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1846,23 +1422,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -1904,12 +1470,12 @@
         "tags": [
           "Sales Invoices & POS"
         ],
-        "summary": "Make POS Sale (RPC)",
-        "description": "High-level RPC transaction to create invoice, process payment, and record sale.",
+        "summary": "Make POS Sale",
+        "description": "Submit sale transaction via RPC.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -1926,23 +1492,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -1979,11 +1535,11 @@
           "Orders & Quotations"
         ],
         "summary": "List Sales Orders",
-        "description": "Fetches draft/open sales orders.",
+        "description": "Fetch open sales orders.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2002,23 +1558,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -2029,11 +1575,11 @@
           "Orders & Quotations"
         ],
         "summary": "Fetch Quotations",
-        "description": "Fetches quotations for POS cart loading.",
+        "description": "Fetch quotations from cloud.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2054,23 +1600,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -2081,11 +1617,11 @@
           "Orders & Quotations"
         ],
         "summary": "Create Quotation",
-        "description": "Saves a quotation in Frappe cloud.",
+        "description": "Create quotation doc.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2101,23 +1637,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -2147,12 +1673,12 @@
         "tags": [
           "Payments & Shifts"
         ],
-        "summary": "Create Payment Entry",
-        "description": "Records payment reconciliation against an invoice or credit note.",
+        "summary": "Create Payment",
+        "description": "Record payment entry.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2168,23 +1694,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -2211,12 +1727,12 @@
         "tags": [
           "Payments & Shifts"
         ],
-        "summary": "Get Modes of Payment",
-        "description": "Fetches tender payment modes (Cash, Ecocash, Swipe, Laybye).",
+        "summary": "Get Payment Modes",
+        "description": "Fetch payment modes list.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2235,23 +1751,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -2262,11 +1768,11 @@
           "Payments & Shifts"
         ],
         "summary": "Start Shift",
-        "description": "Opens cashier shift with opening cash float.",
+        "description": "Open cashier shift with float.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2282,23 +1788,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -2324,11 +1820,11 @@
           "Payments & Shifts"
         ],
         "summary": "Close Shift",
-        "description": "Closes shift and reconciles counted cash against expected sales.",
+        "description": "Close shift and reconcile tenders.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2345,23 +1841,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -2390,12 +1876,12 @@
         "tags": [
           "Expenses"
         ],
-        "summary": "List Expense Categories",
-        "description": "Fetches expense claim types (e.g. Fuel, Stationery).",
+        "summary": "Expense Categories",
+        "description": "List expense claim categories.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2413,23 +1899,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -2439,12 +1915,12 @@
         "tags": [
           "Expenses"
         ],
-        "summary": "Submit Expense Claim",
-        "description": "Submits petty cash expense claim from POS terminal.",
+        "summary": "Submit Expense",
+        "description": "Submit petty cash expense claim.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2461,23 +1937,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -2506,12 +1972,12 @@
         "tags": [
           "Pharmacy & Medical"
         ],
-        "summary": "Get Doctors Directory",
-        "description": "Fetches medical doctors and practice numbers.",
+        "summary": "Get Doctors",
+        "description": "Fetch medical doctors list.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2531,23 +1997,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -2558,11 +2014,11 @@
           "Pharmacy & Medical"
         ],
         "summary": "Create Doctor",
-        "description": "Registers a new doctor profile.",
+        "description": "Register a new doctor.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2578,23 +2034,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -2619,12 +2065,12 @@
         "tags": [
           "Pharmacy & Medical"
         ],
-        "summary": "Get Prescription Dosages",
-        "description": "Retrieves prescription dosage directions for medication dispensing.",
+        "summary": "Get Dosages",
+        "description": "Fetch prescription dosage directions.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2643,23 +2089,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -2669,8 +2105,8 @@
         "tags": [
           "Inventory & Stock"
         ],
-        "summary": "Real-Time Stock Balance",
-        "description": "Queries live warehouse inventory balance for an item.",
+        "summary": "Stock Balance",
+        "description": "Query live item quantity at warehouse.",
         "parameters": [
           {
             "name": "item_code",
@@ -2691,7 +2127,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2705,23 +2141,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -2731,12 +2157,12 @@
         "tags": [
           "Inventory & Stock"
         ],
-        "summary": "Submit Stock Entry",
-        "description": "Submits stock issues, transfers, or damage adjustments.",
+        "summary": "Stock Entry",
+        "description": "Submit stock movements or adjustments.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2752,23 +2178,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -2798,11 +2214,11 @@
           "Suppliers & Purchasing"
         ],
         "summary": "List Suppliers",
-        "description": "Fetches supplier accounts.",
+        "description": "Fetch supplier list.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2820,23 +2236,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -2846,12 +2252,12 @@
         "tags": [
           "Suppliers & Purchasing"
         ],
-        "summary": "Submit Purchase Invoice (GRV)",
-        "description": "Records supplier stock delivery and invoice.",
+        "summary": "Submit GRV Invoice",
+        "description": "Record supplier invoice and stock receipt.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2867,23 +2273,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -2914,8 +2310,8 @@
         "tags": [
           "Master Data & Setup"
         ],
-        "summary": "Currency Exchange Rate",
-        "description": "Fetches current exchange rate between two currencies (e.g. USD to ZiG).",
+        "summary": "Exchange Rate",
+        "description": "Fetch rate between two currencies.",
         "parameters": [
           {
             "name": "from_currency",
@@ -2936,7 +2332,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -2950,23 +2346,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -2976,12 +2362,12 @@
         "tags": [
           "Master Data & Setup"
         ],
-        "summary": "List Currencies",
-        "description": "Fetches enabled currencies.",
+        "summary": "Currencies",
+        "description": "List enabled currencies.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -3002,23 +2388,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -3028,12 +2404,12 @@
         "tags": [
           "ZIMRA Fiscalization"
         ],
-        "summary": "Get ZIMRA Cloud Token",
-        "description": "Authenticates with Havano ZIMRA fiscal gateway.",
+        "summary": "ZIMRA Token",
+        "description": "Authenticate with ZIMRA gateway.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -3050,23 +2426,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -3077,8 +2443,7 @@
                 "type": "object"
               },
               "example": {
-                "device_model_name": "Havano Virtual Device",
-                "device_model_version": "1.0"
+                "device_model_name": "Havano Device"
               }
             }
           }
@@ -3091,11 +2456,11 @@
           "ZIMRA Fiscalization"
         ],
         "summary": "Open Fiscal Day",
-        "description": "Opens fiscal day on ZIMRA FDMS gateway.",
+        "description": "Open fiscal day on ZIMRA FDMS.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -3111,23 +2476,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -3150,12 +2505,12 @@
         "tags": [
           "ZIMRA Fiscalization"
         ],
-        "summary": "Send Fiscal Invoice to ZIMRA",
-        "description": "Submits invoice to ZIMRA for digital signature and QR verification code.",
+        "summary": "Send Fiscal Invoice",
+        "description": "Transmit invoice for ZIMRA fiscal signature.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -3172,23 +2527,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -3213,12 +2558,12 @@
         "tags": [
           "Restaurant & KDS"
         ],
-        "summary": "Get Tables & Floor Plan",
-        "description": "Fetches dining tables and occupancy status.",
+        "summary": "Restaurant Tables",
+        "description": "Fetch tables and layout status.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -3244,23 +2589,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -3270,12 +2605,12 @@
         "tags": [
           "Restaurant & KDS"
         ],
-        "summary": "Send Kitchen Order Ticket (KOT)",
-        "description": "Transmits food order to Kitchen Display System.",
+        "summary": "Send KOT",
+        "description": "Send order ticket to kitchen display.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -3291,23 +2626,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         },
         "requestBody": {
@@ -3337,16 +2662,15 @@
           "Subscriptions & Billing"
         ],
         "summary": "Subscription Status",
-        "description": "Checks POS license status, active tier, and remaining days.",
+        "description": "Check license days remaining.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
                   "status": "Active",
-                  "plan": "Standard Single Till",
                   "days_remaining": 58
                 }
               }
@@ -3357,74 +2681,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/subscription/plans": {
-      "get": {
-        "tags": [
-          "Subscriptions & Billing"
-        ],
-        "summary": "Subscription Plans",
-        "description": "Lists license tier packages.",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "example": {
-                  "plans": [
-                    {
-                      "id": 1,
-                      "name": "Monthly",
-                      "price_usd": 25.0
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Invalid credentials or session expired"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
+            "description": "Server Error"
           }
         }
       }
@@ -3434,8 +2697,8 @@
         "tags": [
           "Reports & Analytics"
         ],
-        "summary": "Daily Sales Summary",
-        "description": "Returns sales volume and tender breakdown for a date.",
+        "summary": "Daily Sales",
+        "description": "Daily sales turnover and count.",
         "parameters": [
           {
             "name": "date",
@@ -3448,7 +2711,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "OK",
             "content": {
               "application/json": {
                 "example": {
@@ -3465,85 +2728,13 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Invalid credentials or session expired"
+                  "message": "Invalid credentials"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/method/frappe.desk.query_report.run": {
-      "post": {
-        "tags": [
-          "Reports & Analytics"
-        ],
-        "summary": "Execute Frappe Report",
-        "description": "Executes Frappe Script or Query Report.",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": {
-                    "columns": [],
-                    "result": []
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Invalid credentials or session expired"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exc": "frappe.exceptions.ValidationError"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object"
-              },
-              "example": {
-                "report_name": "Item-wise Sales Register",
-                "filters": {}
-              }
-            }
+            "description": "Server Error"
           }
         }
       }

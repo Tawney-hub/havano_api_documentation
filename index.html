@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Havano POS - Frappe & SaaS Backoffice API</title>
+  <title>Havano POS API</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234f46e5'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
   <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,9 +13,9 @@
     :root {
       --primary: #4f46e5;
       --primary-hover: #4338ca;
-      --bg-dark: #0f172a;
-      --surface-dark: #1e293b;
-      --border-dark: #334155;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --border: #334155;
       --accent: #10b981;
     }
 
@@ -31,14 +31,14 @@
       color: #0f172a;
     }
 
-    /* Minimal Top Navigation */
+    /* Minimal Navbar */
     header.nav {
-      background: var(--bg-dark);
-      padding: 0.75rem 1.5rem;
+      background: var(--bg);
+      padding: 0.65rem 1.25rem;
       position: sticky;
       top: 0;
       z-index: 1000;
-      border-bottom: 1px solid var(--border-dark);
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -46,71 +46,37 @@
       flex-wrap: wrap;
     }
 
-    .brand-wrap {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-    }
-
-    .brand-logo {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: 700;
-      font-size: 1rem;
-    }
-
-    .brand-name {
+    .brand {
       color: #fff;
       font-size: 1.05rem;
       font-weight: 700;
+      letter-spacing: -0.01em;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.5rem;
     }
 
-    .badge {
-      font-size: 0.65rem;
-      font-weight: 600;
-      background: rgba(99, 102, 241, 0.2);
-      color: #a5b4fc;
-      border: 1px solid rgba(165, 180, 252, 0.3);
-      padding: 0.15rem 0.45rem;
-      border-radius: 9999px;
-      text-transform: uppercase;
+    .brand-icon {
+      width: 26px;
+      height: 26px;
+      background: var(--primary);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
     }
 
-    /* Target Server Input */
-    .server-control {
+    /* Editable Server Input */
+    .server-box {
       display: flex;
       align-items: center;
       background: #090d16;
-      border: 1px solid var(--border-dark);
-      border-radius: 6px;
-      padding: 0.25rem 0.6rem;
-      gap: 0.45rem;
-    }
-
-    .server-label {
-      color: #94a3b8;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .server-input {
-      background: transparent;
-      border: none;
-      color: #38bdf8;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
-      width: 250px;
-      outline: none;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 0.2rem 0.5rem;
+      gap: 0.4rem;
     }
 
     .server-dot {
@@ -121,20 +87,37 @@
       box-shadow: 0 0 6px var(--accent);
     }
 
-    .nav-buttons {
+    .server-label {
+      color: #64748b;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .server-input {
+      background: transparent;
+      border: none;
+      color: #38bdf8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      width: 240px;
+      outline: none;
+    }
+
+    .actions {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      font-size: 0.8rem;
+      gap: 0.3rem;
+      font-size: 0.78rem;
       font-weight: 600;
-      padding: 0.4rem 0.75rem;
-      border-radius: 6px;
+      padding: 0.35rem 0.7rem;
+      border-radius: 5px;
       cursor: pointer;
       text-decoration: none;
       border: none;
@@ -150,87 +133,84 @@
     }
 
     .btn-dark {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
       color: #f1f5f9;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.12);
     }
     .btn-dark:hover {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.18);
     }
 
-    /* Sub-bar Tag Filters */
+    /* Tags Bar */
     .tags-bar {
-      background: var(--surface-dark);
-      border-bottom: 1px solid var(--border-dark);
-      padding: 0.45rem 1.5rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.35rem 1.25rem;
       display: flex;
-      gap: 0.4rem;
+      gap: 0.3rem;
       overflow-x: auto;
       white-space: nowrap;
       scrollbar-width: none;
     }
 
     .tag-btn {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 600;
-      padding: 0.28rem 0.7rem;
+      padding: 0.25rem 0.6rem;
       border-radius: 4px;
       background: #0f172a;
       color: #94a3b8;
       border: 1px solid #334155;
       cursor: pointer;
       text-decoration: none;
-      transition: all 0.15s ease;
     }
 
     .tag-btn:hover {
       color: #fff;
-      border-color: #64748b;
     }
 
     .tag-btn.active {
       background: var(--primary);
       color: #fff;
       border-color: var(--primary);
-      box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
     }
 
-    /* Swagger UI Container */
+    /* Swagger Container */
     #swagger-ui {
-      max-width: 1300px;
-      margin: 1rem auto 3rem;
+      max-width: 1280px;
+      margin: 0.5rem auto 3rem;
       padding: 0 1rem;
     }
 
+    /* HIDE Swagger UI default bulky header blocks (info, description, servers dropdown) */
+    .swagger-ui .information-container,
+    .swagger-ui .scheme-container,
     .swagger-ui .info {
-      margin: 1rem 0;
+      display: none !important;
     }
-    .swagger-ui .info .title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #0f172a;
-    }
+
     .swagger-ui .opblock {
-      border-radius: 6px;
-      margin-bottom: 8px;
+      border-radius: 5px;
+      margin-bottom: 6px;
     }
     .swagger-ui .opblock .opblock-summary-method {
-      border-radius: 4px;
+      border-radius: 3px;
       font-weight: 700;
-      min-width: 70px;
+      min-width: 65px;
+      font-size: 0.75rem;
     }
     .swagger-ui .opblock .opblock-summary-path {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
     }
 
-    /* Modal for Auth Helper */
+    /* Auth Modal */
     .modal-bg {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(3px);
+      backdrop-filter: blur(2px);
       z-index: 2000;
       align-items: center;
       justify-content: center;
@@ -240,35 +220,29 @@
     .modal-box {
       background: #1e293b;
       color: #fff;
-      border-radius: 10px;
-      max-width: 440px;
+      border-radius: 8px;
+      max-width: 400px;
       width: 100%;
-      padding: 1.5rem;
+      padding: 1.25rem;
       border: 1px solid #334155;
     }
 
     .modal-title {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .modal-desc {
-      font-size: 0.82rem;
-      color: #94a3b8;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
     .modal-input {
       width: 100%;
-      padding: 0.55rem 0.75rem;
+      padding: 0.5rem 0.7rem;
       background: #0f172a;
       border: 1px solid #334155;
-      border-radius: 6px;
+      border-radius: 5px;
       color: #fff;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
-      margin-bottom: 0.75rem;
+      font-size: 0.8rem;
+      margin-bottom: 0.6rem;
     }
     .modal-input:focus {
       outline: none;
@@ -278,41 +252,31 @@
 </head>
 <body>
 
-  <!-- Minimal Nav -->
+  <!-- Clean Top Nav -->
   <header class="nav">
-    <div class="brand-wrap">
-      <div class="brand-logo">H</div>
-      <div class="brand-name">
-        Havano POS
-        <span class="badge">Frappe & SaaS Mode</span>
-      </div>
+    <div class="brand">
+      <div class="brand-icon">H</div>
+      <span>Havano POS API</span>
     </div>
 
-    <!-- User Editable Testing URL -->
-    <div class="server-control" title="Target Server Base URL (edit anytime for live testing)">
+    <div class="server-box" title="Server URL for testing">
       <span class="server-dot"></span>
-      <span class="server-label">Server:</span>
+      <span class="server-label">Server</span>
       <input type="text" id="targetServerUrl" class="server-input" value="https://backoffice.havano.pro" spellcheck="false" onchange="onServerChange()">
     </div>
 
-    <div class="nav-buttons">
-      <button class="btn btn-primary" onclick="openAuthModal()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-        Authorize
-      </button>
-
-      <a href="openapi.json" download="openapi.json" class="btn btn-dark">
-        JSON
-      </a>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="openAuthModal()">Authorize</button>
+      <a href="openapi.json" download="openapi.json" class="btn btn-dark">JSON</a>
     </div>
   </header>
 
-  <!-- Quick Category Tabs (Frappe Core First & Auto-Selected) -->
+  <!-- Tag Category Tabs (Frappe Core First & Auto-Selected) -->
   <nav class="tags-bar" id="tagNav">
-    <button class="tag-btn active" id="btnFrappeCore" onclick="filterByTag('Frappe Core APIs', this)">⚡ Frappe Core APIs</button>
-    <button class="tag-btn" onclick="filterByTag('all', this)">All Endpoints</button>
+    <button class="tag-btn active" onclick="filterByTag('Frappe Core APIs', this)">Frappe Core APIs</button>
+    <button class="tag-btn" onclick="filterByTag('all', this)">All</button>
     <button class="tag-btn" onclick="filterByTag('Auth & Terminals', this)">Auth & Terminals</button>
-    <button class="tag-btn" onclick="filterByTag('Products & Bundles', this)">Products & Bundles</button>
+    <button class="tag-btn" onclick="filterByTag('Products & Bundles', this)">Products</button>
     <button class="tag-btn" onclick="filterByTag('Customers & Loyalty', this)">Customers</button>
     <button class="tag-btn" onclick="filterByTag('Sales Invoices & POS', this)">Sales Invoices</button>
     <button class="tag-btn" onclick="filterByTag('Orders & Quotations', this)">Orders & Quotations</button>
@@ -328,19 +292,17 @@
     <button class="tag-btn" onclick="filterByTag('Reports & Analytics', this)">Reports</button>
   </nav>
 
-  <!-- Mount Point for Swagger UI -->
+  <!-- Swagger UI Mount -->
   <main id="swagger-ui"></main>
 
   <!-- Auth Modal -->
   <div class="modal-bg" id="authModal">
     <div class="modal-box">
-      <h3 class="modal-title">Set API Authorization</h3>
-      <p class="modal-desc">Enter your credentials (username/email and password or token) to test endpoints live.</p>
+      <h3 class="modal-title">Authorize</h3>
+      <input type="text" id="authKey" class="modal-input" placeholder="API Key / Username">
+      <input type="password" id="authSecret" class="modal-input" placeholder="API Secret / Password">
       
-      <input type="text" id="authKey" class="modal-input" placeholder="Username / Email / API Key">
-      <input type="password" id="authSecret" class="modal-input" placeholder="Password / API Secret">
-      
-      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
+      <div style="display:flex; justify-content:flex-end; gap:0.4rem; margin-top:0.4rem;">
         <button class="btn btn-dark" onclick="closeAuthModal()">Cancel</button>
         <button class="btn btn-primary" onclick="saveAuth()">Apply</button>
       </div>
@@ -368,7 +330,7 @@
         ],
         layout: "BaseLayout",
         defaultModelsExpandDepth: 0,
-        defaultModelExpandDepth: 1,
+        defaultModelExpandDepth: 0,
         docExpansion: "list",
         filter: true,
         showExtensions: false,
@@ -385,17 +347,15 @@
           return req;
         },
         onComplete: function() {
-          // Auto-select "Frappe Core APIs" by default on initial load
           setTimeout(function() {
             applyTagFilter('Frappe Core APIs');
-          }, 300);
+          }, 250);
         }
       });
     };
 
     function onServerChange() {
-      const newUrl = getCustomServerUrl();
-      console.log("[Swagger] Server URL set to:", newUrl);
+      console.log("[Swagger] Server set to:", getCustomServerUrl());
     }
 
     function applyTagFilter(tag) {
@@ -424,7 +384,7 @@
       const key = document.getElementById('authKey').value.trim();
       const sec = document.getElementById('authSecret').value.trim();
       if (!key || !sec) {
-        alert("Please enter both username/API key and password/secret.");
+        alert("Enter both API key and secret.");
         return;
       }
       const tokenHeader = `token ${key}:${sec}`;
@@ -436,7 +396,7 @@
             value: tokenHeader
           }
         });
-        alert("Authorization applied: " + tokenHeader);
+        alert("Applied: " + tokenHeader);
       }
       closeAuthModal();
     }

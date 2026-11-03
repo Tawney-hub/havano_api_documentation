@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Havano POS - SaaS Backoffice API</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234f46e5'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg-dark: #0f172a;
+      --surface-dark: #1e293b;
+      --border-dark: #334155;
+      --accent: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    /* Minimal Top Navigation */
+    header.nav {
+      background: var(--bg-dark);
+      padding: 0.75rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid var(--border-dark);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .brand-name {
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border: 1px solid rgba(165, 180, 252, 0.3);
+      padding: 0.15rem 0.45rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+
+    /* Target Server Input */
+    .server-control {
+      display: flex;
+      align-items: center;
+      background: #090d16;
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      padding: 0.2rem 0.5rem;
+      gap: 0.4rem;
+    }
+
+    .server-label {
+      color: #94a3b8;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .server-input {
+      background: transparent;
+      border: none;
+      color: #38bdf8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      width: 250px;
+      outline: none;
+    }
+
+    .server-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+    }
+
+    .nav-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-dark {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f1f5f9;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .btn-dark:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Sub-bar Tag Filters */
+    .tags-bar {
+      background: var(--surface-dark);
+      border-bottom: 1px solid var(--border-dark);
+      padding: 0.4rem 1.5rem;
+      display: flex;
+      gap: 0.35rem;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+    }
+
+    .tag-btn {
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      background: #0f172a;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .tag-btn:hover,
+    .tag-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* Swagger UI Container */
+    #swagger-ui {
+      max-width: 1300px;
+      margin: 1rem auto 3rem;
+      padding: 0 1rem;
+    }
+
+    /* Minimal override for Swagger UI */
+    .swagger-ui .info {
+      margin: 1rem 0;
+    }
+    .swagger-ui .info .title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .swagger-ui .opblock {
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .swagger-ui .opblock .opblock-summary-method {
+      border-radius: 4px;
+      font-weight: 700;
+      min-width: 70px;
+    }
+    .swagger-ui .opblock .opblock-summary-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+
+    /* Modal for Auth Helper */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(3px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-box {
+      background: #1e293b;
+      color: #fff;
+      border-radius: 10px;
+      max-width: 440px;
+      width: 100%;
+      padding: 1.5rem;
+      border: 1px solid #334155;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-desc {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      margin-bottom: 1rem;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      margin-bottom: 0.75rem;
+    }
+    .modal-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Minimal Nav -->
+  <header class="nav">
+    <div class="brand-wrap">
+      <div class="brand-logo">H</div>
+      <div class="brand-name">
+        Havano POS
+        <span class="badge">SaaS Mode</span>
+      </div>
+    </div>
+
+    <!-- User Editable Testing URL -->
+    <div class="server-control" title="Target Server Base URL (edit anytime for live testing)">
+      <span class="server-dot"></span>
+      <span class="server-label">Server:</span>
+      <input type="text" id="targetServerUrl" class="server-input" value="https://backoffice.havano.pro" spellcheck="false" onchange="onServerChange()">
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-primary" onclick="openAuthModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        Authorize
+      </button>
+
+      <a href="openapi.json" download="openapi.json" class="btn btn-dark">
+        JSON
+      </a>
+    </div>
+  </header>
+
+  <!-- Quick Category Tabs -->
+  <nav class="tags-bar" id="tagNav">
+    <button class="tag-btn active" onclick="filterByTag('all')">All</button>
+    <button class="tag-btn" onclick="filterByTag('Auth & Multi-Tenant Terminals')">Auth & Terminals</button>
+    <button class="tag-btn" onclick="filterByTag('Products, Catalog & Bundles')">Products & Bundles</button>
+    <button class="tag-btn" onclick="filterByTag('Customers & Loyalty')">Customers</button>
+    <button class="tag-btn" onclick="filterByTag('Sales Invoices & POS Upload')">Sales Invoices</button>
+    <button class="tag-btn" onclick="filterByTag('Sales Orders & Quotations')">Orders & Quotations</button>
+    <button class="tag-btn" onclick="filterByTag('Payments, MOPs & Shifts')">Payments & Shifts</button>
+    <button class="tag-btn" onclick="filterByTag('Expenses Management')">Expenses</button>
+    <button class="tag-btn" onclick="filterByTag('Medical & Pharmacy')">Pharmacy</button>
+    <button class="tag-btn" onclick="filterByTag('Inventory & Stock')">Stock</button>
+    <button class="tag-btn" onclick="filterByTag('Suppliers & Purchasing')">Suppliers</button>
+    <button class="tag-btn" onclick="filterByTag('Master Data & Setup')">Master Data</button>
+    <button class="tag-btn" onclick="filterByTag('ZIMRA Fiscalization')">ZIMRA</button>
+    <button class="tag-btn" onclick="filterByTag('Restaurant & Hospitality')">Restaurant</button>
+    <button class="tag-btn" onclick="filterByTag('Subscriptions & Billing')">Subscriptions</button>
+    <button class="tag-btn" onclick="filterByTag('Reports & Analytics')">Reports</button>
+    <button class="tag-btn" onclick="filterByTag('Support & Helpdesk')">Support</button>
+  </nav>
+
+  <!-- Mount Point for Swagger UI -->
+  <main id="swagger-ui"></main>
+
+  <!-- Auth Modal -->
+  <div class="modal-bg" id="authModal">
+    <div class="modal-box">
+      <h3 class="modal-title">Set API Authorization</h3>
+      <p class="modal-desc">Enter your Havano SaaS credentials or token string to authenticate test requests.</p>
+      
+      <input type="text" id="authKey" class="modal-input" placeholder="API Key / Email (e.g. cashier@havano.pro)">
+      <input type="password" id="authSecret" class="modal-input" placeholder="API Secret / Password">
+      
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
+        <button class="btn btn-dark" onclick="closeAuthModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveAuth()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-standalone-preset.js"></script>
+  <script>
+    let ui;
+
+    function getCustomServerUrl() {
+      const el = document.getElementById('targetServerUrl');
+      return (el && el.value ? el.value.trim().replace(/\/+$/, '') : 'https://backoffice.havano.pro');
+    }
+
+    window.onload = function() {
+      ui = SwaggerUIBundle({
+        url: "openapi.json",
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "BaseLayout",
+        defaultModelsExpandDepth: 0,
+        defaultModelExpandDepth: 1,
+        docExpansion: "list",
+        filter: true,
+        showExtensions: false,
+        tryItOutEnabled: true,
+        persistAuthorization: true,
+        requestInterceptor: function(req) {
+          const targetUrl = getCustomServerUrl();
+          // If the user entered a custom server URL, rewrite outgoing requests to target it
+          if (targetUrl) {
+            const defaultBase = "https://backoffice.havano.pro";
+            if (req.url.startsWith(defaultBase)) {
+              req.url = req.url.replace(defaultBase, targetUrl);
+            }
+          }
+          return req;
+        }
+      });
+    };
+
+    function onServerChange() {
+      const newUrl = getCustomServerUrl();
+      console.log("[Swagger] Server URL set to:", newUrl);
+    }
+
+    function filterByTag(tag) {
+      document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const filterInput = document.querySelector('.swagger-ui .filter-container input');
+      if (filterInput) {
+        filterInput.value = (tag === 'all' ? '' : tag);
+        filterInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+
+    function openAuthModal() {
+      document.getElementById('authModal').style.display = 'flex';
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').style.display = 'none';
+    }
+
+    function saveAuth() {
+      const key = document.getElementById('authKey').value.trim();
+      const sec = document.getElementById('authSecret').value.trim();
+      if (!key || !sec) {
+        alert("Please enter both API key and secret.");
+        return;
+      }
+      const tokenHeader = `token ${key}:${sec}`;
+      if (ui && ui.authActions && ui.authActions.authorize) {
+        ui.authActions.authorize({
+          FrappeTokenAuth: {
+            name: "FrappeTokenAuth",
+            schema: { type: "apiKey", in: "header", name: "Authorization" },
+            value: tokenHeader
+          }
+        });
+        alert("Authorization applied: " + tokenHeader);
+      }
+      closeAuthModal();
+    }
+  </script>
+</body>
+</html>

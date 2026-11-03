@@ -1,0 +1,19 @@
+{
+  "name": "havano-pos-frappe-swagger",
+  "version": "1.0.0",
+  "description": "Interactive Swagger UI OpenAPI Documentation for Havano POS Frappe & SaaS API",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "keywords": [
+    "swagger",
+    "openapi",
+    "havano-pos",
+    "frappe",
+    "erpnext"
+  ],
+  "author": "Havano POS",
+  "license": "UNLICENSED"
+}
+

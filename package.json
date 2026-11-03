@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Interactive Swagger UI OpenAPI Documentation for Havano POS Frappe & SaaS API",
   "scripts": {
-    "start": "npx serve .",
-    "dev": "npx serve ."
+    "start": "node init && npx serve .",
+    "dev": "node init && npx serve ."
   },
   "keywords": [
     "swagger",
@@ -16,4 +16,3 @@
   "author": "Havano POS",
   "license": "UNLICENSED"
 }
-

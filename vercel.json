@@ -18,12 +18,7 @@
         {
           "key": "Access-Control-Allow-Headers",
           "value": "*"
-        }
-      ]
-    },
-    {
-      "source": "/openapi.json",
-      "headers": [
+        },
         {
           "key": "Cache-Control",
           "value": "no-cache, no-store, must-revalidate, max-age=0, s-maxage=0"
@@ -35,19 +30,6 @@
         {
           "key": "Expires",
           "value": "0"
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/json"
-        }
-      ]
-    },
-    {
-      "source": "/index.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate, max-age=0, s-maxage=0"
         }
       ]
     }

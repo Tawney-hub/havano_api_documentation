@@ -17,6 +17,7 @@
       --surface: #1e293b;
       --border: #334155;
       --accent: #10b981;
+      --amber: #f59e0b;
     }
 
     * {
@@ -31,7 +32,7 @@
       color: #0f172a;
     }
 
-    /* Minimal Navbar */
+    /* Minimal Top Navigation */
     header.nav {
       background: var(--bg);
       padding: 0.65rem 1.25rem;
@@ -68,39 +69,54 @@
       font-weight: 700;
     }
 
-    /* Editable Server Input */
-    .server-box {
+    /* Server Mode Selector */
+    .server-controls {
       display: flex;
       align-items: center;
       background: #090d16;
       border: 1px solid var(--border);
-      border-radius: 5px;
+      border-radius: 6px;
       padding: 0.2rem 0.5rem;
       gap: 0.4rem;
     }
 
     .server-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: var(--accent);
       box-shadow: 0 0 6px var(--accent);
     }
-
-    .server-label {
-      color: #64748b;
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
+    .server-dot.live {
+      background: var(--amber);
+      box-shadow: 0 0 6px var(--amber);
     }
 
-    .server-input {
+    .server-select {
       background: transparent;
       border: none;
       color: #38bdf8;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
       font-size: 0.8rem;
-      width: 240px;
+      outline: none;
+      cursor: pointer;
+    }
+    .server-select option {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    .custom-url-input {
+      display: none;
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      width: 220px;
       outline: none;
     }
 
@@ -204,6 +220,24 @@
       font-size: 0.82rem;
     }
 
+    /* Toast notification */
+    #mockNotice {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid var(--accent);
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      z-index: 3000;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
     /* Auth Modal */
     .modal-bg {
       display: none;
@@ -259,10 +293,15 @@
       <span>Havano POS API</span>
     </div>
 
-    <div class="server-box" title="Server URL for live API execution">
-      <span class="server-dot"></span>
-      <span class="server-label">Server</span>
-      <input type="text" id="targetServerUrl" class="server-input" value="https://backoffice.havano.pro" spellcheck="false" onchange="onServerChange()">
+    <!-- Server Mode Selector with Built-in Sample Dummy Mode -->
+    <div class="server-controls">
+      <span class="server-dot" id="serverDot"></span>
+      <select id="serverModeSelect" class="server-select" onchange="onModeChange()">
+        <option value="mock" selected>✨ Sample Dummy Data (Instant Test)</option>
+        <option value="live">🌐 Live Backoffice (backoffice.havano.pro)</option>
+        <option value="custom">✏️ Custom URL...</option>
+      </select>
+      <input type="text" id="customUrlInput" class="custom-url-input" placeholder="https://your-server.com" spellcheck="false" onchange="onCustomUrlChange()">
     </div>
 
     <div class="actions">
@@ -295,12 +334,18 @@
   <!-- Swagger UI Mount -->
   <main id="swagger-ui"></main>
 
+  <!-- Notice -->
+  <div id="mockNotice">
+    <span>✨</span>
+    <span><strong>Sample Mode:</strong> Instant testing with realistic mock data (no real server needed).</span>
+  </div>
+
   <!-- Auth Modal -->
   <div class="modal-bg" id="authModal">
     <div class="modal-box">
       <h3 class="modal-title">Authorize</h3>
-      <input type="text" id="authKey" class="modal-input" placeholder="API Key / Username">
-      <input type="password" id="authSecret" class="modal-input" placeholder="API Secret / Password">
+      <input type="text" id="authKey" class="modal-input" placeholder="API Key / Username" value="cashier@havano.pro">
+      <input type="password" id="authSecret" class="modal-input" placeholder="API Secret / Password" value="SecretPass123!">
       
       <div style="display:flex; justify-content:flex-end; gap:0.4rem; margin-top:0.4rem;">
         <button class="btn btn-dark" onclick="closeAuthModal()">Cancel</button>
@@ -313,14 +358,110 @@
   <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-standalone-preset.js"></script>
   <script>
     let ui;
+    let specCache = null;
 
-    function getCustomServerUrl() {
-      const el = document.getElementById('targetServerUrl');
-      return (el && el.value ? el.value.trim().replace(/\/+$/, '') : 'https://backoffice.havano.pro');
+    // Helper: Normalize URL to find path in OpenAPI spec
+    function findSpecOperation(url, method) {
+      if (!specCache || !specCache.paths) return null;
+      try {
+        const parsed = new URL(url, window.location.origin);
+        let pathname = decodeURIComponent(parsed.pathname);
+
+        // Try exact match
+        if (specCache.paths[pathname] && specCache.paths[pathname][method.toLowerCase()]) {
+          return specCache.paths[pathname][method.toLowerCase()];
+        }
+
+        // Try pattern match for parameterized paths like /api/resource/{doctype}/{docname}
+        for (const pattern in specCache.paths) {
+          const regexStr = '^' + pattern.replace(/\{[^}]+\}/g, '[^/]+') + '$';
+          const regex = new RegExp(regexStr);
+          if (regex.test(pathname) && specCache.paths[pattern][method.toLowerCase()]) {
+            return specCache.paths[pattern][method.toLowerCase()];
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      return null;
+    }
+
+    // Intercept window.fetch to return instant dummy sample data when in mock mode
+    const rawFetch = window.fetch;
+    window.fetch = async function(input, init = {}) {
+      const url = typeof input === 'string' ? input : (input && input.url ? input.url : '');
+      const method = (init.method || (input && input.method) || 'GET').toUpperCase();
+
+      // If fetching the openapi.json spec itself, pass through to rawFetch
+      if (url.includes('openapi.json')) {
+        const resp = await rawFetch(input, init);
+        const cloned = resp.clone();
+        cloned.json().then(data => { specCache = data; }).catch(() => {});
+        return resp;
+      }
+
+      // Check current mode
+      const mode = document.getElementById('serverModeSelect').value;
+      if (mode === 'mock') {
+        const op = findSpecOperation(url, method);
+        let sampleData = null;
+
+        if (op && op.responses && op.responses['200'] && op.responses['200'].content && op.responses['200'].content['application/json']) {
+          sampleData = op.responses['200'].content['application/json'].example;
+        }
+
+        if (!sampleData) {
+          sampleData = {
+            message: "Success (Sample Mock Data)",
+            endpoint: url,
+            method: method,
+            timestamp: new Date().toISOString()
+          };
+        }
+
+        // Return instant realistic 200 OK Response
+        return new Response(JSON.stringify(sampleData, null, 2), {
+          status: 200,
+          statusText: "OK",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Mock-Data": "true"
+          }
+        });
+      }
+
+      // In live or custom mode, use standard network request
+      return rawFetch(input, init);
+    };
+
+    function onModeChange() {
+      const mode = document.getElementById('serverModeSelect').value;
+      const customInput = document.getElementById('customUrlInput');
+      const dot = document.getElementById('serverDot');
+      const notice = document.getElementById('mockNotice');
+
+      if (mode === 'custom') {
+        customInput.style.display = 'inline-block';
+        dot.className = 'server-dot live';
+        notice.style.display = 'none';
+      } else if (mode === 'live') {
+        customInput.style.display = 'none';
+        dot.className = 'server-dot live';
+        notice.innerHTML = '<span>🌐</span><span><strong>Live Mode:</strong> Executing against production backoffice.</span>';
+        notice.style.display = 'flex';
+      } else {
+        customInput.style.display = 'none';
+        dot.className = 'server-dot';
+        notice.innerHTML = '<span>✨</span><span><strong>Sample Mode:</strong> Instant testing with realistic mock data (no real server needed).</span>';
+        notice.style.display = 'flex';
+      }
+    }
+
+    function onCustomUrlChange() {
+      console.log("[Swagger] Custom target set to:", document.getElementById('customUrlInput').value);
     }
 
     window.onload = function() {
-      // Force cache-busting timestamp on every page load
       const cacheBustSpecUrl = "openapi.json?t=" + new Date().getTime();
 
       ui = SwaggerUIBundle({
@@ -340,20 +481,28 @@
         tryItOutEnabled: true,
         persistAuthorization: true,
         requestInterceptor: function(req) {
-          const targetServer = getCustomServerUrl();
-          const defaultServer = "https://backoffice.havano.pro";
+          const mode = document.getElementById('serverModeSelect').value;
 
-          // If the URL starts with default server, rewrite it to user-specified target server
-          if (req.url.startsWith(defaultServer)) {
-            req.url = req.url.replace(defaultServer, targetServer);
+          // If in mock mode, keep the request local so our fetch interceptor catches it instantly
+          if (mode === 'mock') {
+            return req;
           }
 
-          // If hosted on Vercel or any remote domain, proxy through /api/proxy to bypass browser CORS!
+          let targetServer = "https://backoffice.havano.pro";
+          if (mode === 'custom') {
+            const val = document.getElementById('customUrlInput').value.trim();
+            if (val) targetServer = val.replace(/\/+$/, '');
+          }
+
+          const defaultBase = "https://backoffice.havano.pro";
+          if (req.url.startsWith(defaultBase)) {
+            req.url = req.url.replace(defaultBase, targetServer);
+          }
+
+          // If on remote hosting (Vercel), proxy live calls through /api/proxy to bypass CORS
           if (window.location.protocol.startsWith('http') && !window.location.hostname.includes('localhost')) {
-            // Only proxy if calling an external server
             if (req.url.startsWith('http://') || req.url.startsWith('https://')) {
-              const fullTarget = req.url;
-              req.url = window.location.origin + "/api/proxy?url=" + encodeURIComponent(fullTarget);
+              req.url = window.location.origin + "/api/proxy?url=" + encodeURIComponent(req.url);
             }
           }
           return req;
@@ -365,10 +514,6 @@
         }
       });
     };
-
-    function onServerChange() {
-      console.log("[Swagger] Server set to:", getCustomServerUrl());
-    }
 
     function applyTagFilter(tag) {
       const filterInput = document.querySelector('.swagger-ui .filter-container input');

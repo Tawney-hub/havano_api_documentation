@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Havano POS - SaaS Backoffice API</title>
+  <title>Havano POS - Frappe & SaaS Backoffice API</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234f46e5'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
   <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -92,8 +92,8 @@
       background: #090d16;
       border: 1px solid var(--border-dark);
       border-radius: 6px;
-      padding: 0.2rem 0.5rem;
-      gap: 0.4rem;
+      padding: 0.25rem 0.6rem;
+      gap: 0.45rem;
     }
 
     .server-label {
@@ -162,31 +162,37 @@
     .tags-bar {
       background: var(--surface-dark);
       border-bottom: 1px solid var(--border-dark);
-      padding: 0.4rem 1.5rem;
+      padding: 0.45rem 1.5rem;
       display: flex;
-      gap: 0.35rem;
+      gap: 0.4rem;
       overflow-x: auto;
       white-space: nowrap;
       scrollbar-width: none;
     }
 
     .tag-btn {
-      font-size: 0.72rem;
-      font-weight: 500;
-      padding: 0.25rem 0.6rem;
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 0.28rem 0.7rem;
       border-radius: 4px;
       background: #0f172a;
       color: #94a3b8;
       border: 1px solid #334155;
       cursor: pointer;
       text-decoration: none;
+      transition: all 0.15s ease;
     }
 
-    .tag-btn:hover,
+    .tag-btn:hover {
+      color: #fff;
+      border-color: #64748b;
+    }
+
     .tag-btn.active {
       background: var(--primary);
       color: #fff;
       border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
     }
 
     /* Swagger UI Container */
@@ -196,7 +202,6 @@
       padding: 0 1rem;
     }
 
-    /* Minimal override for Swagger UI */
     .swagger-ui .info {
       margin: 1rem 0;
     }
@@ -279,7 +284,7 @@
       <div class="brand-logo">H</div>
       <div class="brand-name">
         Havano POS
-        <span class="badge">SaaS Mode</span>
+        <span class="badge">Frappe & SaaS Mode</span>
       </div>
     </div>
 
@@ -302,25 +307,25 @@
     </div>
   </header>
 
-  <!-- Quick Category Tabs -->
+  <!-- Quick Category Tabs (Frappe Core First & Auto-Selected) -->
   <nav class="tags-bar" id="tagNav">
-    <button class="tag-btn active" onclick="filterByTag('all')">All</button>
-    <button class="tag-btn" onclick="filterByTag('Auth & Multi-Tenant Terminals')">Auth & Terminals</button>
-    <button class="tag-btn" onclick="filterByTag('Products, Catalog & Bundles')">Products & Bundles</button>
-    <button class="tag-btn" onclick="filterByTag('Customers & Loyalty')">Customers</button>
-    <button class="tag-btn" onclick="filterByTag('Sales Invoices & POS Upload')">Sales Invoices</button>
-    <button class="tag-btn" onclick="filterByTag('Sales Orders & Quotations')">Orders & Quotations</button>
-    <button class="tag-btn" onclick="filterByTag('Payments, MOPs & Shifts')">Payments & Shifts</button>
-    <button class="tag-btn" onclick="filterByTag('Expenses Management')">Expenses</button>
-    <button class="tag-btn" onclick="filterByTag('Medical & Pharmacy')">Pharmacy</button>
-    <button class="tag-btn" onclick="filterByTag('Inventory & Stock')">Stock</button>
-    <button class="tag-btn" onclick="filterByTag('Suppliers & Purchasing')">Suppliers</button>
-    <button class="tag-btn" onclick="filterByTag('Master Data & Setup')">Master Data</button>
-    <button class="tag-btn" onclick="filterByTag('ZIMRA Fiscalization')">ZIMRA</button>
-    <button class="tag-btn" onclick="filterByTag('Restaurant & Hospitality')">Restaurant</button>
-    <button class="tag-btn" onclick="filterByTag('Subscriptions & Billing')">Subscriptions</button>
-    <button class="tag-btn" onclick="filterByTag('Reports & Analytics')">Reports</button>
-    <button class="tag-btn" onclick="filterByTag('Support & Helpdesk')">Support</button>
+    <button class="tag-btn active" id="btnFrappeCore" onclick="filterByTag('Frappe Core APIs', this)">⚡ Frappe Core APIs</button>
+    <button class="tag-btn" onclick="filterByTag('all', this)">All Endpoints</button>
+    <button class="tag-btn" onclick="filterByTag('Auth & Terminals', this)">Auth & Terminals</button>
+    <button class="tag-btn" onclick="filterByTag('Products & Bundles', this)">Products & Bundles</button>
+    <button class="tag-btn" onclick="filterByTag('Customers & Loyalty', this)">Customers</button>
+    <button class="tag-btn" onclick="filterByTag('Sales Invoices & POS', this)">Sales Invoices</button>
+    <button class="tag-btn" onclick="filterByTag('Orders & Quotations', this)">Orders & Quotations</button>
+    <button class="tag-btn" onclick="filterByTag('Payments & Shifts', this)">Payments & Shifts</button>
+    <button class="tag-btn" onclick="filterByTag('Expenses', this)">Expenses</button>
+    <button class="tag-btn" onclick="filterByTag('Pharmacy & Medical', this)">Pharmacy</button>
+    <button class="tag-btn" onclick="filterByTag('Inventory & Stock', this)">Stock</button>
+    <button class="tag-btn" onclick="filterByTag('Suppliers & Purchasing', this)">Suppliers</button>
+    <button class="tag-btn" onclick="filterByTag('Master Data & Setup', this)">Master Data</button>
+    <button class="tag-btn" onclick="filterByTag('ZIMRA Fiscalization', this)">ZIMRA</button>
+    <button class="tag-btn" onclick="filterByTag('Restaurant & KDS', this)">Restaurant</button>
+    <button class="tag-btn" onclick="filterByTag('Subscriptions & Billing', this)">Subscriptions</button>
+    <button class="tag-btn" onclick="filterByTag('Reports & Analytics', this)">Reports</button>
   </nav>
 
   <!-- Mount Point for Swagger UI -->
@@ -330,10 +335,10 @@
   <div class="modal-bg" id="authModal">
     <div class="modal-box">
       <h3 class="modal-title">Set API Authorization</h3>
-      <p class="modal-desc">Enter your Havano SaaS credentials or token string to authenticate test requests.</p>
+      <p class="modal-desc">Enter your credentials (username/email and password or token) to test endpoints live.</p>
       
-      <input type="text" id="authKey" class="modal-input" placeholder="API Key / Email (e.g. cashier@havano.pro)">
-      <input type="password" id="authSecret" class="modal-input" placeholder="API Secret / Password">
+      <input type="text" id="authKey" class="modal-input" placeholder="Username / Email / API Key">
+      <input type="password" id="authSecret" class="modal-input" placeholder="Password / API Secret">
       
       <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
         <button class="btn btn-dark" onclick="closeAuthModal()">Cancel</button>
@@ -371,7 +376,6 @@
         persistAuthorization: true,
         requestInterceptor: function(req) {
           const targetUrl = getCustomServerUrl();
-          // If the user entered a custom server URL, rewrite outgoing requests to target it
           if (targetUrl) {
             const defaultBase = "https://backoffice.havano.pro";
             if (req.url.startsWith(defaultBase)) {
@@ -379,6 +383,12 @@
             }
           }
           return req;
+        },
+        onComplete: function() {
+          // Auto-select "Frappe Core APIs" by default on initial load
+          setTimeout(function() {
+            applyTagFilter('Frappe Core APIs');
+          }, 300);
         }
       });
     };
@@ -388,15 +398,18 @@
       console.log("[Swagger] Server URL set to:", newUrl);
     }
 
-    function filterByTag(tag) {
-      document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-
+    function applyTagFilter(tag) {
       const filterInput = document.querySelector('.swagger-ui .filter-container input');
       if (filterInput) {
         filterInput.value = (tag === 'all' ? '' : tag);
         filterInput.dispatchEvent(new Event('input', { bubbles: true }));
       }
+    }
+
+    function filterByTag(tag, el) {
+      document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
+      if (el) el.classList.add('active');
+      applyTagFilter(tag);
     }
 
     function openAuthModal() {
@@ -411,7 +424,7 @@
       const key = document.getElementById('authKey').value.trim();
       const sec = document.getElementById('authSecret').value.trim();
       if (!key || !sec) {
-        alert("Please enter both API key and secret.");
+        alert("Please enter both username/API key and password/secret.");
         return;
       }
       const tokenHeader = `token ${key}:${sec}`;
